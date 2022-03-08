@@ -2,7 +2,6 @@ package main
 
 import (
 	"context"
-	"errors"
 	"flag"
 	"fmt"
 
@@ -57,8 +56,7 @@ func main() {
 		fmt.Println("Migrating", sg.Path())
 		tg, err := tc.PutGroup(ctx, sg)
 		if err != nil {
-			var membershipError keycloak.MembershipSyncError
-			if errors.Is(err, &membershipError) {
+			if _, ok := err.(*keycloak.MembershipSyncErrors); ok {
 				fmt.Println(fmt.Errorf("WARNING failed to migrate member: %w", err))
 			} else {
 				panic(fmt.Errorf("failed to load groups from source: %w", err))
